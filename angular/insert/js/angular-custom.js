@@ -1,9 +1,29 @@
-$postModule = angular.module('postModule', []);
+$postModule = angular.module('postModule', ['ui.filters']);
+
+
+$postModule.directive("fileread", [function () { 
+     return {
+        scope: {
+            fileread: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+                scope.$apply(function () {
+                    scope.fileread = changeEvent.target.files[0]['name'];
+                    //console.log(changeEvent.target.files[0]['name']);
+                    // or all selected files:
+                    // scope.fileread = changeEvent.target.files;
+                });
+            });
+        }
+    }
+}]);
 //var base_path = document.getElementById('base_path').value;
 var base_path = "http://localhost/demo/angular/insert/";
 $postModule.controller('PostController',function($scope, $http){
 	$scope.post = {};
 	$scope.post.users = [];
+	$scope.post.company = [];
 	$scope.tempUser = {};
 	$scope.editMode = false;
 	$scope.index = '';
@@ -18,20 +38,22 @@ $postModule.controller('PostController',function($scope, $http){
 	      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 	    }).
 	    success(function(data, status, headers, config) {
-	    	if(data.success){
-	    		if( $scope.editMode ){
+	    	if(data.success){ 
+	    		if( $scope.editMode ){ console.log($scope.tempUser);
 	    			$scope.post.users[$scope.index].id = data.id;
 	    			$scope.post.users[$scope.index].name = $scope.tempUser.name;
 	    			$scope.post.users[$scope.index].email = $scope.tempUser.email;
 	    			$scope.post.users[$scope.index].companyName = $scope.tempUser.companyName;
 	    			$scope.post.users[$scope.index].designation = $scope.tempUser.designation;
-	    		}else{
+	    		 	$scope.post.users[$scope.index].avatar = $scope.tempUser.avatar;
+	    		}else{ 
 	    			$scope.post.users.push({
 		    			id : data.id,
 		    			name : $scope.tempUser.name,
 		    			email : $scope.tempUser.email,
 		    			companyName : $scope.tempUser.companyName,
-		    			designation : $scope.tempUser.designation
+		    			designation : $scope.tempUser.designation,
+		    			avatar : $scope.tempUser.avatar
 		    		});
 	    		}
 	    		$scope.messageSuccess(data.message);
@@ -57,6 +79,49 @@ $postModule.controller('PostController',function($scope, $http){
 		$scope.index = '';
 	}
 	
+	$scope.uploadFile = function(files) {
+	   	var file_data = $("#avatar").prop("files")[0];   // Getting the properties of file from file field
+		var form_data = new FormData();                  // Creating object of FormData class
+		form_data.append("file", file_data);    
+	    $.ajax({
+		      method: 'post',
+		      url: 'upload.php',
+		      data: form_data,
+		      contentType: false,
+			  processData: false,
+
+		    }).
+		    success(function(data, status, headers, config) {
+		    	if(data){
+		    		$("#avatar_pic").val(data);
+		    	}else{
+		    		alert("not");
+		    	}
+		    });
+	}
+
+    // NOW UPLOAD THE FILES.
+    /*$scope.uploadFile = function () {
+        var file_data = $("#avatar").prop("files")[0];   // Getting the properties of file from file field
+		var form_data = new FormData();                  // Creating object of FormData class
+		form_data.append("file", file_data);    
+
+        var request = {
+            method: 'POST',
+            url: 'upload.php',
+            data: form_data,
+            
+        };
+
+        // SEND THE FILES.
+        $http(request)
+            .success(function (d) {
+                alert(d);
+            })
+            .error(function () {
+            });
+    }*/
+	
 	$scope.updateUser = function(){
 		$('.btn-save').button('loading');
 		$scope.saveUser();
@@ -68,7 +133,8 @@ $postModule.controller('PostController',function($scope, $http){
 			name : user.name,
 			email : user.email,
 			companyName : user.companyName,
-			designation : user.designation
+			designation : user.designation,
+			avatar : user.avatar,
 		};
 		$scope.editMode = true;
 		$scope.index = $scope.post.users.indexOf(user);
@@ -97,6 +163,26 @@ $postModule.controller('PostController',function($scope, $http){
 		    });
 		}
 	}
+	$scope.searchUser = function(companyName){
+		$http({
+	      method: 'post',
+	      url: url,
+	      data: $.param({ 'companyName' : companyName, 'type' : 'search_user' }),
+	      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+	    }).
+	    success(function(data, status, headers, config) {
+	    	if(data.success){
+	    		$scope.post.users = data.data;
+	    		//$scope.post.tempData = "searched";
+	    	}else{
+	    		$scope.messageFailure(data.message);
+	    	}
+	    }).
+	    error(function(data, status, headers, config) {
+	    	//$scope.messageFailure(data.message);
+	    });
+	}
+	
 	
 	$scope.initss = function(){
 	    $http({
@@ -108,6 +194,7 @@ $postModule.controller('PostController',function($scope, $http){
 	    success(function(data, status, headers, config) {
 	    	if(data.success && !angular.isUndefined(data.data) ){
 	    		$scope.post.users = data.data;
+	    		$scope.post.company = data.data;
 	    	}else{
 	    		$scope.messageFailure(data.message);
 	    	}

@@ -19,6 +19,7 @@
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/angular.min.js"></script>
 	<script src="js/angular-custom.js"></script>
+	<script src="js/unique.js"></script>
 </head>
 <body class="ng-scope" data-ng-init="initss()" data-ng-controller="PostController" data-ng-app="postModule">
 <input type="hidden" value="http://localhost/demo/angular/insert/" id="base_path">
@@ -33,7 +34,7 @@
 			<div class="alert alert-success text-center alert-success-div" role="alert" style="display: none">
 				<p></p>
 			</div>
-			<form novalidate name="userForm" class="ng-valid-required ng-dirty ng-invalid ng-invalid-email ng-valid-minlength">
+			<form novalidate name="userForm" class="ng-valid-required ng-dirty ng-invalid ng-invalid-email ng-valid-minlength" enctype="multipart/form-data">
 				<div class="form-group">
 					<label for="name">Name</label> 
 					<input type="text" data-ng-model="tempUser.name" placeholder="Name" name="name" id="name" class="form-control ng-touched ng-valid-minlength ng-pristine ng-valid ng-valid-required" required="" data-ng-minlength="3">
@@ -50,6 +51,13 @@
 					<label for="designation">Designation</label> 
 					<input type="text" data-ng-model="tempUser.designation" placeholder="Designation" name="designation" id="designation" class="form-control ng-valid-minlength ng-touched ng-pristine ng-valid ng-valid-required" required="" data-ng-minlength="3">
 				</div>
+				<div class="form-group">
+					<label for="avatar">Avatar</label> 
+					<input type="file" name="avatar" id="avatar" fileread="tempUser.avatar"  onchange="angular.element(this).scope().uploadFile(this.files)" >
+					<!-- <input type="text" data-ng-model="tempUser.avatar" /> -->
+					<input type="hidden" name="avatar_pic" id="avatar_pic" />
+				</div>
+				    
 				<div class="text-center">
 					<button data-ng-click="addUser()" class="btn btn-save" type="submit" ng-hide="tempUser.id" data-loading-text="Saving User..." ng-disabled="userForm.$invalid" disabled="disabled">Save User</button>
 					<button data-ng-click="updateUser()" class="btn btn-save" type="submit" ng-hide="!tempUser.id" data-loading-text="Updating User..." ng-disabled="userForm.$invalid" disabled="disabled">Update User</button>
@@ -57,11 +65,19 @@
 			</form>
 		</div>
 		<div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 animated fadeInUp">
+			<div class="form-group">
+				<label for="companyName">Search</label> 
+				<select ng-model="companyName" ng-selected="companyName" ng-change="searchUser(companyName)">
+					<option class="ng-scope" value="">Select</option>
+					<option class="ng-scope" data-ng-repeat="user in post.company | unique:'companyName'" >{{user.companyName}}</option>
+				</select>
+			</div>
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover table-striped">
 					<thead>
 						<tr>
 							<th width="5%">#</th>
+							<th width="20%">Avatar</th>
 							<th width="20%">Name</th>
 							<th width="20%">Email</th>
 							<th width="20%">Company Name</th>
@@ -70,13 +86,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="ng-scope" data-ng-repeat="user in post.users | orderBy : '-id'">
+						<tr class="ng-scope" data-ng-repeat="user in post.users | orderBy : '-id'"  >
 							<th class="ng-binding" scope="row">{{user.id}}</th>
+							<td class="ng-binding"><img ng-src="uploads/{{user.avatar}}" style="width:60px"/></td>
 							<td class="ng-binding">{{user.name}}</td>
 							<td class="ng-binding">{{user.email}}</td>
 							<td class="ng-binding">{{user.companyName}}</td>
 							<td class="ng-binding">{{user.designation}}</td>
-							<td><span data-ng-click="editUser(user)"> Edit</span> | <span data-ng-click="deleteUser(user)">Delete</span></td>
+							<td><span class="links" data-ng-click="editUser(user)"> Edit</span> | <span data-ng-click="deleteUser(user)" class="links">Delete</span></td>
 						</tr>
 					</tbody>
 				</table>

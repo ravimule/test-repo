@@ -159,3 +159,4 @@ div.error {
 .help-block.error {
     color: red !important;
 }
+.links { cursor: pointer; }

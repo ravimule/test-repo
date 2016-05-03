@@ -20,6 +20,12 @@ if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
 		case "getUsers":
 			getUsers($mysqli);
 			break;
+		case "search_user":
+			search_user($mysqli,  $_POST['companyName']);
+			break;
+		case "avatar_upload":
+			avatar_upload();
+			break;
 		default:
 			invalidRequest();
 	}
@@ -35,6 +41,7 @@ function save_user($mysqli){
 	try{
 		$data = array();
 		$name = $mysqli->real_escape_string(isset( $_POST['user']['name'] ) ? $_POST['user']['name'] : '');
+		$avatar = $mysqli->real_escape_string(isset( $_POST['user']['avatar'] ) ? $_POST['user']['avatar'] : '');
 		$companyName = $mysqli->real_escape_string(isset( $_POST['user']['companyName'] ) ? $_POST['user']['companyName'] : '');
 		$designation = $mysqli->real_escape_string( isset( $_POST['user']['designation'] ) ? $_POST['user']['designation'] : '');
 		$email = $mysqli->real_escape_string( isset( $_POST['user']['email'] ) ? $_POST['user']['email'] : '');
@@ -46,9 +53,9 @@ function save_user($mysqli){
 	
 	
 		if(empty($id)){
-			$query = "INSERT INTO employee (`id`, `name`, email, `companyName`, `designation`) VALUES ('', '$name', '$email', '$companyName', '$designation')";
+			$query = "INSERT INTO employee (`id`, `name`, email, `companyName`, `designation`, `avatar`) VALUES ('', '$name', '$email', '$companyName', '$designation', '$avatar')";
 		}else{
-			$query = "UPDATE employee SET `name` = '$name', email = '$email', `companyName` = '$companyName', `designation` = '$designation' WHERE `employee`.`id` = $id";
+			$query = "UPDATE employee SET `name` = '$name', email = '$email', `companyName` = '$companyName', `designation` = '$designation', `avatar` = '$avatar' WHERE `employee`.`id` = $id";
 		}
 	
 		if( $mysqli->query( $query ) ){
@@ -124,9 +131,32 @@ function getUsers($mysqli){
 		exit;
 	}
 }
-	
-	
 
+function search_user($mysqli,  $companyName = ''){
+	try{
+		if( $companyName != ""){
+			$query = "SELECT * FROM `employee` where `companyName` = '$companyName' order by id";
+		}
+		else{
+			$query = "SELECT * FROM `employee` order by id";
+		}
+		$result = $mysqli->query( $query );
+		$data = array();
+		while ($row = $result->fetch_assoc()) {
+			$row['id'] = (int) $row['id'];
+			$data['data'][] = $row;
+		}
+		$data['success'] = true;
+		echo json_encode($data);exit;
+	
+	}catch (Exception $e){
+		$data = array();
+		$data['success'] = false;
+		$data['message'] = $e->getMessage();
+		echo json_encode($data);
+		exit;
+	}
+}
 
 function invalidRequest()
 {
