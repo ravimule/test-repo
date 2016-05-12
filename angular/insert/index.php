@@ -20,6 +20,7 @@
 	<script src="js/angular.min.js"></script>
 	<script src="js/angular-custom.js"></script>
 	<script src="js/unique.js"></script>
+	<script src="js/pagination.js"></script>
 </head>
 <body class="ng-scope" data-ng-init="initss()" data-ng-controller="PostController" data-ng-app="postModule">
 <input type="hidden" value="http://localhost/demo/angular/insert/" id="base_path">
@@ -53,8 +54,9 @@
 				</div>
 				<div class="form-group">
 					<label for="avatar">Avatar</label> 
-					<input type="file" name="avatar" id="avatar" fileread="tempUser.avatar"  onchange="angular.element(this).scope().uploadFile(this.files)" >
-					<!-- <input type="text" data-ng-model="tempUser.avatar" /> -->
+					<input type="file" name="avatar" ng-model="tempUser.avatar"  id="avatar" fileread="tempUser.avatar"  onchange="angular.element(this).scope().uploadFile(this.files)" >
+					<!-- <img src=""  class="edit_avatar_show"/> -->
+					<!-- <input type="text" data-ng-model="tempUser.avatar" class="edit_avatar" />  -->
 					<input type="hidden" name="avatar_pic" id="avatar_pic" />
 				</div>
 				    
@@ -77,16 +79,16 @@
 					<thead>
 						<tr>
 							<th width="5%">#</th>
-							<th width="20%">Avatar</th>
-							<th width="20%">Name</th>
+							<th width="10%">Profile</th>
+							<th width="15%">Name</th>
 							<th width="20%">Email</th>
-							<th width="20%">Company Name</th>
+							<th width="15%">Company Name</th>
 							<th width="15%">Designation</th>
-							<th width="20%">Action</th>
+							<th width="30%">Action</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="ng-scope" data-ng-repeat="user in post.users | orderBy : '-id'"  >
+						<tr class="ng-scope" data-ng-repeat="user in post.users | orderBy : '-id' | startFrom:currentPage*pageSize | limitTo:pageSize" >
 							<th class="ng-binding" scope="row">{{user.id}}</th>
 							<td class="ng-binding"><img ng-src="uploads/{{user.avatar}}" style="width:60px"/></td>
 							<td class="ng-binding">{{user.name}}</td>
@@ -97,6 +99,13 @@
 						</tr>
 					</tbody>
 				</table>
+				<button ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+			        Previous
+			    </button>
+			    {{currentPage+1}}/{{numberOfPages()}}
+			    <button ng-disabled="currentPage >= numberOfPages() - 1" ng-click="currentPage=currentPage+1">
+			        Next
+			    </button>
 			</div>
 		</div>
 	</div>

@@ -1,5 +1,4 @@
-$postModule = angular.module('postModule', ['ui.filters']);
-
+$postModule = angular.module('postModule', ['ui.filters','pagination']);
 
 $postModule.directive("fileread", [function () { 
      return {
@@ -10,6 +9,7 @@ $postModule.directive("fileread", [function () {
             element.bind("change", function (changeEvent) {
                 scope.$apply(function () {
                     scope.fileread = changeEvent.target.files[0]['name'];
+                    //attributes.$set('src', 'image_fetched_from_server.png');
                     //console.log(changeEvent.target.files[0]['name']);
                     // or all selected files:
                     // scope.fileread = changeEvent.target.files;
@@ -18,6 +18,7 @@ $postModule.directive("fileread", [function () {
         }
     }
 }]);
+
 //var base_path = document.getElementById('base_path').value;
 var base_path = "http://localhost/demo/angular/insert/";
 $postModule.controller('PostController',function($scope, $http){
@@ -29,6 +30,15 @@ $postModule.controller('PostController',function($scope, $http){
 	$scope.index = '';
 	
 	var url = base_path+'ajax.php';
+
+	/* pagination */	
+	$scope.currentPage = 0;
+    $scope.pageSize = 3;
+    $scope.data = [];
+    $scope.numberOfPages=function(){
+        return Math.ceil($scope.post.users.length/$scope.pageSize);                
+    }
+    /* end pagination */
 	
 	$scope.saveUser = function(){
 	    $http({
@@ -79,7 +89,7 @@ $postModule.controller('PostController',function($scope, $http){
 		$scope.index = '';
 	}
 	
-	$scope.uploadFile = function(files) {
+	/*$scope.uploadFile = function(files) {
 	   	var file_data = $("#avatar").prop("files")[0];   // Getting the properties of file from file field
 		var form_data = new FormData();                  // Creating object of FormData class
 		form_data.append("file", file_data);    
@@ -98,29 +108,32 @@ $postModule.controller('PostController',function($scope, $http){
 		    		alert("not");
 		    	}
 		    });
-	}
+	}*/
 
     // NOW UPLOAD THE FILES.
-    /*$scope.uploadFile = function () {
+    $scope.uploadFile = function () {
         var file_data = $("#avatar").prop("files")[0];   // Getting the properties of file from file field
 		var form_data = new FormData();                  // Creating object of FormData class
-		form_data.append("file", file_data);    
+		form_data.append("file", file_data);
 
-        var request = {
-            method: 'POST',
-            url: 'upload.php',
-            data: form_data,
-            
+		var request = {
+	            method: 'POST',
+	            url: 'upload.php',
+	            data: form_data,
+	            headers: {
+	                'Content-Type': ''
+	        	}
         };
 
-        // SEND THE FILES.
-        $http(request)
-            .success(function (d) {
-                alert(d);
-            })
-            .error(function () {
-            });
-    }*/
+        // SEND THE FILES
+        $http(request).success(function (d) {
+            console.log('uploaded');
+        })
+       	.error(function () {
+        	console.log('problem in uploading');
+        });
+        
+   	}
 	
 	$scope.updateUser = function(){
 		$('.btn-save').button('loading');
@@ -128,6 +141,8 @@ $postModule.controller('PostController',function($scope, $http){
 	}
 	
 	$scope.editUser = function(user){
+		//var img = $(".edit_avatar").val();
+		//$(".edit_avatar_show").attr('src', 'uploads/'+img);
 		$scope.tempUser = {
 			id: user.id,
 			name : user.name,
