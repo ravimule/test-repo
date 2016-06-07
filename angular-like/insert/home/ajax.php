@@ -32,10 +32,10 @@ if( isset($_POST['type']) && !empty( isset($_POST['type']) ) ){
 			search_des($mysqli,  $_POST['designation']);
 			break;
 		case "autocomplete":
-			autocomplete($mysqli,  $_POST['autocomplete']);
+			autocomplete($mysqli,  $_POST['autocomplete'], $_SESSION['user_session']);
 			break;
 		case "user_selected":
-			user_selected($mysqli,  $_POST['user_selected']);
+			user_selected($mysqli,  $_POST['user_selected'], $_SESSION['user_session']);
 			break;
 		case "sort_user":
 			sort_user($mysqli,  $_POST['sortUser']);
@@ -135,8 +135,8 @@ function getUsers($mysqli, $log_user = ''){
 		//$query = "SELECT `employee`.*, count(`ua`.`user_id`) as `likes`, `ua`.`reg_user_id`, `ua`.`flag`, group_concat(`ua`.`reg_user_id`) as `liked_by` FROM `employee` left join `user_activity` as `ua` ON `employee`.`emp_id` = `ua`.`emp_id` group by `ua`.`emp_id` limit 8";
 
 		$query = "SELECT * from ( SELECT * from employee ) as FirstSet
-		left join ( SELECT `user_id`,`emp_id` as `e_id`, SUM(if(`flag` = 1, 1, 0)) as `likes`, group_concat(`reg_user_id`) as `liked_by`, `reg_user_id` FROM user_activity group by `e_id` ) as SecondSet on FirstSet.`emp_id` = SecondSet.`e_id`
-		left join ( select `flag`, `emp_id` as `temp_id` from user_activity where `reg_user_id` = $log_user ) as third on SecondSet.`e_id` = third.`temp_id` limit 8";
+		left join ( SELECT `user_id`,`emp_id` as `e_id`, sum(if(`flag` = 1, 1, 0)) as `likes`, group_concat(if(`flag`=1, `reg_user_id`, null)) as `liked_by`, `reg_user_id` FROM user_activity group by `e_id` ) as SecondSet on FirstSet.`emp_id` = SecondSet.`e_id`
+		left join ( select `flag`, `emp_id` as `temp_id` from user_activity where `reg_user_id` = 1 ) as third on SecondSet.`e_id` = third.`temp_id` limit 8";
 
 		$result = $mysqli->query( $query );
 		$record = array();
@@ -169,7 +169,7 @@ function search_user($mysqli,  $companyName = ''){
 		$result = $mysqli->query( $query );
 		$data = array();
 		while ($row = $result->fetch_assoc()) {
-			$row['id'] = (int) $row['id'];
+			$row['emp_id'] = (int) $row['emp_id'];
 			$data['data'][] = $row;
 		}
 		$data['success'] = true;
@@ -210,10 +210,12 @@ function search_des($mysqli,  $designation = ''){
 	}
 }
 
-function autocomplete($mysqli,  $autocomplete = ''){
+function autocomplete($mysqli,  $autocomplete = '', $log_user = ''){
 	try{
 		if( $autocomplete != ""){
-			$query = "SELECT * FROM `employee` where `name` LIKE '%".$autocomplete."%' order by name";
+			$query = "SELECT * from ( SELECT * FROM `employee` where `name` LIKE '%".$autocomplete."%' order by name ) as FirstSet
+		left join ( SELECT `user_id`,`emp_id` as `e_id`, SUM(if(`flag` = 1, 1, 0)) as `likes`, group_concat(`reg_user_id`) as `liked_by`, `reg_user_id` FROM user_activity group by `e_id` ) as SecondSet on FirstSet.`emp_id` = SecondSet.`e_id`
+		left join ( select `flag`, `emp_id` as `temp_id` from user_activity where `reg_user_id` = $log_user ) as third on SecondSet.`e_id` = third.`temp_id`";
 		}
 		else{
 			$query = "SELECT * FROM `employee` order by emp_id";
@@ -236,10 +238,12 @@ function autocomplete($mysqli,  $autocomplete = ''){
 	}
 }
 
-function user_selected($mysqli,  $user_selected = ''){
+function user_selected($mysqli,  $user_selected = '', $log_user = ''){
 	try{
 		if( $user_selected != ""){
-			$query = "SELECT * FROM `employee` where `name` LIKE '%".$user_selected."%' order by name";
+			$query = "SELECT * from ( SELECT * FROM `employee` where `name` LIKE '%".$user_selected."%' order by name ) as FirstSet
+		left join ( SELECT `user_id`,`emp_id` as `e_id`, SUM(if(`flag` = 1, 1, 0)) as `likes`, group_concat(`reg_user_id`) as `liked_by`, `reg_user_id` FROM user_activity group by `e_id` ) as SecondSet on FirstSet.`emp_id` = SecondSet.`e_id`
+		left join ( select `flag`, `emp_id` as `temp_id` from user_activity where `reg_user_id` = $log_user ) as third on SecondSet.`e_id` = third.`temp_id`";
 		}
 		else{
 			$query = "SELECT * FROM `employee` order by emp_id";

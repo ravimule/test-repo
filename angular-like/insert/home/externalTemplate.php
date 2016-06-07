@@ -25,13 +25,12 @@
 		<label for="designation">Birth Date</label> 
 		<ng-datepicker data-ng-model="tempUser.birthDate" first-week-day-sunday="true" placeholder="Pick a date"></ng-datepicker>
 	</div>	
-	<div class="form-group">
-		<label for="avatar">Avatar</label> 
-		<input type="file" name="avatar" ng-model="tempUser.avatar"  id="avatar" fileread="tempUser.avatar"  onchange="angular.element(this).scope().uploadFile(this.files)" >
-		<!-- <img src=""  class="edit_avatar_show"/> -->
-		<!-- <input type="text" data-ng-model="tempUser.avatar" class="edit_avatar" />  -->
-		<input type="hidden" name="avatar_pic" id="avatar_pic" />
-	</div>
+	<label for="avatar">Avatar</label> 
+	<input type="file" name="avatar" ng-model="tempUser.avatar"  id="avatar" fileread="tempUser.avatar"  onchange="angular.element(this).scope().uploadFile(this.files)" >
+	<!-- <img src=""  class="edit_avatar_show"/> -->
+	<!-- <input type="text" data-ng-model="tempUser.avatar" class="edit_avatar" />  -->
+	<input type="hidden" name="avatar_pic" id="avatar_pic" />
+	<div class="margin-20"></div>
 	    
 	<div class="text-center">
 		<button data-ng-click="addUser()" class="btn btn-save" type="submit" ng-hide="tempUser.id" data-loading-text="Saving User..." ng-disabled="userForm.$invalid" disabled="disabled">Save User</button>

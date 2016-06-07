@@ -56,7 +56,7 @@ echo $_SESSION['user_session'];
 			<a href="" ng-click="openTemplate()">Add new User</a>
 		</div>
 		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 animated fadeInUp level2">
-			<div class="form-group">
+			<div class="form-group filters">
 				<div class="col-sm-2 col-md-2 col-lg-2">
 					<label for="companyName">Company:</label> 
 					<select ng-model="companyName" ng-selected="companyName" ng-change="searchUser(companyName)">
@@ -115,8 +115,8 @@ echo $_SESSION['user_session'];
 							<th width="10%">Profile</th>
 							<th width="10%">Like </th>
 							<th width="10%">Name</th>
-							<th width="20%">Email</th>
-							<th width="15%">Company Name</th>
+							<th width="15%">Email</th>
+							<th width="10%">Company</th>
 							<th width="15%">Designation</th>
 							<th width="15%">Birth Date</th>
 							<th width="30%">Action</th>
@@ -130,9 +130,9 @@ echo $_SESSION['user_session'];
 							</td>
 							<td class="ng-binding">
 								<a ng-click="doVote(user.emp_id)" title="If you like this, vote it up!" class="text-center" href="">
-							        <i ng-class="( post.rowid == user.emp_id ) ? 'fa-heart' : 'fa-heart-o'" class="fa fa-2x fa-heart"></i><br>
-							        <span ng-bind="ply.votes" class="slide-up ng-binding">1</span>
+									<i ng-class="( user.flag == 1 ) ? 'fa-heart' : 'fa-heart-o'" class="fa fa-2x fa-heart"></i><br>
 							    </a>
+							    <span class="slide-up ng-binding">Likes: {{user.likes == null ? 0 : user.likes}}</span>
 							</td>
 							<td class="ng-binding">{{user.name}}</td>
 							<td class="ng-binding">{{user.email}}</td>
@@ -148,8 +148,10 @@ echo $_SESSION['user_session'];
 							</td>
 							<td class="ng-binding">
 								<a ng-click="doVote(user.emp_id)" title="If you like this, vote it up!" class="text-center" href="">
-									<i ng-class="( user.flag == 1 ) ? 'fa-heart' : 'fa-heart-o'" class="fa fa-2x fa-heart"></i><br>
-									<span class="slide-up ng-binding">Likes: {{user.likes}}</span>
+									<i ng-class="( user.flag == 1 ) ? 'fa-heart' : 'fa-heart-o'" class="fa fa-2x fa-heart" toggle-class="fa-heart-o"></i><br>
+							    </a>
+							    <a data-ng-click="showUsers(user.emp_id)" href="">
+							    	<span class="slide-up ng-binding">Likes: {{user.likes == null ? 0 : user.likes}}</span>
 							    </a>
 							</td>
 							<td class="ng-binding">{{user.name}}</td>
@@ -166,9 +168,9 @@ echo $_SESSION['user_session'];
 							</td>
 							<td class="ng-binding">
 								<a ng-click="doVote(autoname.emp_id)" title="If you like this, vote it up!" class="text-center" href="">
-							        <i ng-class="( post.rowid == user.emp_id ) ? 'fa-heart' : 'fa-heart-o'" class="fa fa-2x fa-heart"></i><br>
-							        <span ng-bind="ply.votes" class="slide-up ng-binding">1</span>
+									<i ng-class="( autoname.flag == 1 ) ? 'fa-heart' : 'fa-heart-o'" class="fa fa-2x fa-heart"></i><br>
 							    </a>
+							    <span class="slide-up ng-binding">Likes: {{autoname.likes == null ? 0 : autoname.likes}}</span>
 							</td>
 							<td class="ng-binding">{{autoname.name}}</td>
 							<td class="ng-binding">{{autoname.email}}</td>

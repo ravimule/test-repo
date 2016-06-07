@@ -174,3 +174,46 @@ img {
 label { font-weight: 200; }
 input { width: 100%; }
 select {  width: 100%; }
+.likedUser p{ font-size: 14px; }
+.likedUser p:nth-child(2n+1) {
+  background: #f0f0f1;
+  padding: 4px;
+}
+.likedUser p:nth-child(2n) {
+  background: papayawhip;
+  padding: 4px;
+}
+strong {
+  color: white;
+}
+.ngdialog.ngdialog-theme-plain .ngdialog-content {
+  background: #34495e !important;
+}
+.likedUser {
+  border: 2px solid #ccc;
+  padding: 25px;
+}
+form {
+  border: 2px solid;
+  color: white;
+  padding: 25px;
+}
+.form-group input {
+  background: black;
+  border: 2px solid white;
+  color: white;
+  height: 40px;
+}
+.margin-20{ margin-top: 20px; }
+.ng-datepicker-input {
+  border-radius: 4px;
+  font-size: 14px;
+  padding: 6px 12px;
+}
+.form-group.filters input, .form-group.filters select {
+  background: white;
+  border: 2px solid #ccc;
+  color: #58666e;
+  height: 40px;
+  padding: 6px;
+}

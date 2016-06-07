@@ -19,6 +19,17 @@ $postModule.directive("fileread", [function () {
     }
 }]);
 
+$postModule.directive('toggleClass', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            element.bind('click', function() {
+                element.toggleClass(attrs.toggleClass);
+            });
+        }
+    };
+});
+
 $postModule.filter('reverse', function() {
 	return function(items) {
 		return items.slice().reverse();
@@ -71,6 +82,17 @@ $postModule.controller('PostController',function($scope, $http, ngDialog, $timeo
         $scope.value = true;
         ngDialog.open({
             template: 'externalTemplate.php',
+            className: 'ngdialog-theme-plain',
+            scope: $scope
+        });
+    };
+
+    $scope.showUsers = function (user) {
+   		$scope.tempUser = {};
+   		$scope.post.rowid = user;
+        $scope.value = true;
+        ngDialog.open({
+            template: 'allUsers.php?id='+user,
             className: 'ngdialog-theme-plain',
             scope: $scope
         });
@@ -221,7 +243,7 @@ $postModule.controller('PostController',function($scope, $http, ngDialog, $timeo
 			$http({
 		      method: 'post',
 		      url: url,
-		      data: $.param({ 'id' : user.id, 'type' : 'delete_user' }),
+		      data: $.param({ 'id' : user.emp_id, 'type' : 'delete_user' }),
 		      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 		    }).
 		    success(function(data, status, headers, config) {
