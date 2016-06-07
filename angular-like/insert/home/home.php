@@ -5,6 +5,7 @@ if(!isset($_SESSION['user_session']))
     header("Location: ../login.php");
     exit;
 }
+echo $_SESSION['user_session'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -140,16 +141,15 @@ if(!isset($_SESSION['user_session']))
 							<td class="ng-binding">{{user.dob | date:'EEE, dd MMM yyyy'}}</td>
 							<td><span class="links" data-ng-click="editTemplate(user)"> Edit</span> | <span data-ng-click="deleteUser(user)" class="links">Delete</span></td>
 						</tr>
-						<tr ng-hide="post.userSelected || post.sortAscDesc === 'z-a'" class="ng-scope" data-ng-repeat="user in post.users | orderBy : post.sortUser | startFrom:currentPage*pageSize | limitTo:pageSize | filter:search:strict" >
+						<tr ng-hide="post.userSelected || post.sortAscDesc === 'z-a'" class="ng-scope" data-ng-repeat="user in post.users | unique:'emp_id' | orderBy : post.sortUser | startFrom:currentPage*pageSize | limitTo:pageSize | filter:search:strict" >
 							<th class="ng-binding" scope="row">{{user.emp_id}}</th>
 							<td class="ng-binding">
 								<img ng-src="uploads/{{user.avatar}}" data-ng-click="imageTemplate(user)" style="width:60px" />
 							</td>
 							<td class="ng-binding">
 								<a ng-click="doVote(user.emp_id)" title="If you like this, vote it up!" class="text-center" href="">
-									<p data-ng-repeat="rowid in post.rowid">
-									<i ng-class="( rowid.emp_id == user.emp_id ) ? 'fa-heart' : 'fa-heart-o'" class="fa fa-2x fa-heart"></i></p><br>
-							       	<span ng-bind="ply.votes" class="slide-up ng-binding">1</span>
+									<i ng-class="( user.flag == 1 ) ? 'fa-heart' : 'fa-heart-o'" class="fa fa-2x fa-heart"></i><br>
+									<span class="slide-up ng-binding">Likes: {{user.likes}}</span>
 							    </a>
 							</td>
 							<td class="ng-binding">{{user.name}}</td>

@@ -51,7 +51,7 @@ function reg_user($mysqli){
 		}
 		else
 		{
-			$query = "INSERT INTO reg_user (`id`, `name`, email, `password`) VALUES ('', '$name', '$email', '$pass')";
+			$query = "INSERT INTO reg_user (`reg_user_id`, `name`, email, `password`) VALUES ('', '$name', '$email', '$pass')";
 		
 			if( $mysqli->query( $query ) ){
 				$data['success'] = true;

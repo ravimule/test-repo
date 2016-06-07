@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 03, 2016 at 06:19 PM
+-- Generation Time: Jun 07, 2016 at 11:54 AM
 -- Server version: 5.5.49-0ubuntu0.14.04.1
 -- PHP Version: 5.5.9-1ubuntu4.16
 
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `reg_user` (
   `password` varchar(200) NOT NULL,
   `date` date NOT NULL,
   PRIMARY KEY (`reg_user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 --
 -- Dumping data for table `reg_user`
@@ -71,7 +71,9 @@ CREATE TABLE IF NOT EXISTS `reg_user` (
 
 INSERT INTO `reg_user` (`reg_user_id`, `name`, `email`, `password`, `date`) VALUES
 (1, 'test', 'test@test.com', 'test', '0000-00-00'),
-(2, 'test1', 'test1@test.com', 'test', '0000-00-00');
+(2, 'test1', 'test1@test.com', 'test', '0000-00-00'),
+(3, 'test1', 'test2@test.com', 'test', '0000-00-00'),
+(4, 'test3', 'test3@test.com', 'test', '0000-00-00');
 
 -- --------------------------------------------------------
 
@@ -85,16 +87,27 @@ CREATE TABLE IF NOT EXISTS `user_activity` (
   `reg_user_id` int(200) NOT NULL,
   `flag` int(100) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=22 ;
 
 --
 -- Dumping data for table `user_activity`
 --
 
 INSERT INTO `user_activity` (`user_id`, `emp_id`, `reg_user_id`, `flag`) VALUES
-(4, 11, 1, 1),
-(5, 13, 1, 1),
-(7, 9, 1, 0);
+(5, 13, 1, 0),
+(7, 9, 1, 1),
+(8, 9, 2, 0),
+(10, 8, 1, 1),
+(11, 7, 1, 1),
+(12, 6, 1, 1),
+(13, 4, 1, 1),
+(14, 6, 2, 1),
+(15, 7, 2, 1),
+(17, 4, 2, 1),
+(18, 13, 2, 1),
+(19, 4, 3, 1),
+(20, 13, 3, 1),
+(21, 4, 4, 1);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

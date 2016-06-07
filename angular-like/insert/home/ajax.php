@@ -130,19 +130,19 @@ function delete_user($mysqli, $id = ''){
  */
 function getUsers($mysqli, $log_user = ''){
 	try{
-		$query = "SELECT * FROM `employee` order by emp_id desc limit 8";
+		//$query = "SELECT * from ( Select  `emp`.`emp_id`, `emp`.`name`, `emp`.`email`, `emp`.`companyName`, `emp`.`designation`, `emp`.`avatar`, `emp`.`dob`, `ua`.`emp_id` as `activity_emp_id`, `ua`.`reg_user_id`, `ua`.`flag` from `employee` as `emp` left join `user_activity` as `ua` on `emp`.`emp_id` = `ua`.`emp_id`) as `data` where (`data`.`reg_user_id` is null  ) order by `data`.`emp_id` desc limit 8";
+		
+		//$query = "SELECT `employee`.*, count(`ua`.`user_id`) as `likes`, `ua`.`reg_user_id`, `ua`.`flag`, group_concat(`ua`.`reg_user_id`) as `liked_by` FROM `employee` left join `user_activity` as `ua` ON `employee`.`emp_id` = `ua`.`emp_id` group by `ua`.`emp_id` limit 8";
+
+		$query = "SELECT * from ( SELECT * from employee ) as FirstSet
+		left join ( SELECT `user_id`,`emp_id` as `e_id`, SUM(if(`flag` = 1, 1, 0)) as `likes`, group_concat(`reg_user_id`) as `liked_by`, `reg_user_id` FROM user_activity group by `e_id` ) as SecondSet on FirstSet.`emp_id` = SecondSet.`e_id`
+		left join ( select `flag`, `emp_id` as `temp_id` from user_activity where `reg_user_id` = $log_user ) as third on SecondSet.`e_id` = third.`temp_id` limit 8";
+
 		$result = $mysqli->query( $query );
-		$data = array();
+		$record = array();
 		while ($row = $result->fetch_assoc()) {
 			$row['emp_id'] = (int) $row['emp_id'];
 			$data['data'][] = $row;
-		}
-
-		$query = "SELECT * from user_activity where `reg_user_id` = '$log_user' and `flag` = 1";
-		$result = $mysqli->query( $query );
-		$record = array();
-		while ($row = $result->fetch_assoc()) { 
-			$data['record'][] = $row;
 		}
 
 		$data['success'] = true;

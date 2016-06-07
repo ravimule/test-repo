@@ -25,6 +25,8 @@ $postModule.filter('reverse', function() {
 		};
 	});
 
+
+
 $postModule.config(['ngDialogProvider', function (ngDialogProvider) {
         ngDialogProvider.setDefaults({
             className: 'ngdialog-theme-default',
@@ -350,10 +352,10 @@ $postModule.controller('PostController',function($scope, $http, ngDialog, $timeo
 	      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 	    }).
 	    success(function(data, status, headers, config) {
-	    	if(data.success && !angular.isUndefined(data.data) ){ console.log(data.record);
+	    	if(data.success && !angular.isUndefined(data.data) ){
 	    		$scope.post.users = data.data;
 	    		$scope.post.company = data.data;
-	    		$scope.post.rowid = data.record;
+	    		//$scope.post.rowid = data.data;
 	    		$scope.post.designation = data.data;
 	    	}else{
 	    		$scope.messageFailure(data.message);
@@ -362,6 +364,15 @@ $postModule.controller('PostController',function($scope, $http, ngDialog, $timeo
 	    error(function(data, status, headers, config) {
 	    	//$scope.messageFailure(data.message);
 	    });
+	}
+	$scope.getTotal = function(){
+	    var total = 0; 
+	    for(var i = 0; i < 2; i++){
+	        var likes = $scope.post.users[i];
+	        console.log(likes.emp_id);
+	        total = sum(likes.emp_id);
+	    }
+	    return total;
 	}
 
 	$scope.doVote = function(rowid){
